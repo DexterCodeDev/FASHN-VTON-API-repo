@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+FROM nvidia/cuda:12.2.2-cudnn8-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -19,10 +19,16 @@ RUN apt-get update && apt-get install -y \
 
 RUN python3 -m pip install --upgrade pip
 
-# Clone VTON repo automatically
+# Install CUDA-compatible torch FIRST
+RUN pip install \
+    torch==2.4.1 \
+    torchvision==0.19.1 \
+    --index-url https://download.pytorch.org/whl/cu121
+
+# Clone repo
 RUN git clone https://github.com/fashn-AI/fashn-vton-1.5.git
 
-# Install VTON package
+# Install repo
 RUN pip install -e ./fashn-vton-1.5
 
 COPY requirements.txt .
