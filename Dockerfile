@@ -19,20 +19,20 @@ RUN apt-get update && apt-get install -y \
 
 RUN python3 -m pip install --upgrade pip
 
-# Install CUDA-compatible torch FIRST
+# CUDA-compatible torch
 RUN pip install \
     torch==2.4.1 \
     torchvision==0.19.1 \
     --index-url https://download.pytorch.org/whl/cu121
 
-# Clone repo
-RUN git clone https://github.com/fashn-AI/fashn-vton-1.5.git
-
-# Install repo
-RUN pip install -e ./fashn-vton-1.5
-
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+# Clone VTON repo
+RUN git clone https://github.com/fashn-AI/fashn-vton-1.5.git
+
+# Install repo WITHOUT overriding deps
+RUN pip install --no-deps -e ./fashn-vton-1.5
 
 COPY app.py .
 COPY start.sh .
